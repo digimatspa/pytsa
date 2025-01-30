@@ -5,7 +5,7 @@ build-backend = "maturin"
 [project]
 name = "pytsa-ais"
 version = "2.3.14"
-requires-python = ">=3.10"
+requires-python = ">=3.13"
 description = "Toolbox for extracting trajectories and monitoring vessels from raw AIS records."
 authors = [
   {email = "niklas.paulig@tu-dresden.de"},
@@ -30,7 +30,9 @@ dependencies = [
     "utm >= 0.7.0",
     "vincenty >=0.1.4",
     "tomli >=2.0.1",
-    "osm2geojson >=0.2.5"
+    "osm2geojson >=0.2.5",
+    "psutil >= 6.1.1",
+    "pyarrow >= 19.0.0"
 ]
 
 [project.urls]
