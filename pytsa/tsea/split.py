@@ -341,6 +341,13 @@ class PauligTREX(_TREXStatCollector):
         self.ST = 1 - alpha
         self.DTL = alpha / 2
         self.DTU = 1 - self.DTL
+        self._checks = (
+            self.deviation_from_reported_too_large,
+            self.time_difference_too_large,
+            self.distance_too_large,
+            self.speed_change_too_large,
+            self.turning_rate_too_large
+        )
 
         
     def __len__(self) -> int:
@@ -525,19 +532,15 @@ class PauligTREX(_TREXStatCollector):
         Pipeline function for checking whether a given
         AIS Message pair is a valid split point.
         """
-        split = []
         if ship_length is None:
             lengthbin = None
-        else: lengthbin = get_length_bin(ship_length)
-        for f in (
-            self.deviation_from_reported_too_large,
-            self.time_difference_too_large,
-            self.distance_too_large,
-            self.speed_change_too_large,
-            self.turning_rate_too_large
-        ):
-            split.append(f(msg_t0,msg_t1,lengthbin))
-        return any(split)
+        else:
+            lengthbin = get_length_bin(ship_length)
+
+        for check in self._checks:
+            if check(msg_t0, msg_t1, lengthbin):
+                return True
+        return False
         
 
 def speed_from_position(msg_t0: AISMessage, 
