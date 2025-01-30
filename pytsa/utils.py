@@ -301,7 +301,7 @@ class DataLoader:
         Get the indices of the columns in the header and
         the index of the timestamp column.
         """
-        col_idxs = [header.split(",").index(c) for c in columns]
+        col_idxs = [header.strip().split(",").index(c.strip()) for c in columns]
         timestamp_col = columns.index(BaseColumns.TIMESTAMP.value)
         return col_idxs, timestamp_col
     
