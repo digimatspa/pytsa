@@ -16,6 +16,9 @@ import psutil
 import vincenty as _vincenty
 import multiprocessing as mp
 import ciso8601
+from pandas.core.dtypes.common import is_datetime64_ns_dtype, is_string_dtype
+from pandas.tseries.api import guess_datetime_format
+
 from .logger import logger
 from .decoder import decode_from_file
 from .decoder.filedescriptor import (
@@ -264,6 +267,14 @@ class DataLoader:
                 ], keep="first"
             )
         return df
+
+    def convert_datetime(self, df: pd.DataFrame) -> pd.DataFrame:
+        column_dtype = df[BaseColumns.TIMESTAMP.value].dtype
+        if not is_datetime64_ns_dtype(column_dtype) and is_string_dtype(column_dtype):
+            datetime_format = guess_datetime_format(df[BaseColumns.TIMESTAMP.value].iloc[0])
+            if datetime_format is not None:
+                df[BaseColumns.TIMESTAMP.value] = pd.to_datetime(df[BaseColumns.TIMESTAMP.value], format=datetime_format)
+        return df
     
     def get_file(self) -> Generator[tuple[Path,Path], None, None]:
         """
@@ -491,7 +502,9 @@ class DataLoader:
             logger.info(f"Loading {stat_path.stem} and {dyn_path.stem}")
             d = pd.read_csv(dyn_path,sep=",",usecols=self.dynamic_columns,engine=DataLoader.ENGINE)
             d = self._dynamic_preprocessor(d)
+            d = self.convert_datetime(d)
             s = pd.read_csv(stat_path,sep=",",usecols=self.static_columns,engine=DataLoader.ENGINE)
+            s = self.convert_datetime(s)
             self.dynamic_data = pd.concat([self.dynamic_data,d])
             self.static_data = pd.concat([self.static_data,s])
         logger.info("Done.")
