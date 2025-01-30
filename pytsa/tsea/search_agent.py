@@ -51,7 +51,8 @@ AVGLENGTHS = {#              v     v------Median
     ShipType.PASSENGER:    (68.82,42),
     ShipType.CARGO:       (114.83,90),
     ShipType.TANKER:      (128.53,110),
-    ShipType.OTHER:        (46.07,31)
+    ShipType.OTHER:        (46.07,31),
+    ShipType.RESERVED:     (46.07,31)
 }
 
 def _identity(x):

@@ -91,11 +91,12 @@ class ShipType(Enum):
     https://coast.noaa.gov/data/marinecadastre/ais/VesselTypeCodes2018.pdf
     """
     __order__ = (
-        "NOTAVAILABLE WIG FISHING TUGTOW MILITARY "
+        "NOTAVAILABLE RESERVED WIG FISHING TUGTOW MILITARY "
         "SAILING PLEASURE HSC PASSENGER "
         "CARGO TANKER OTHER"
     )
     NOTAVAILABLE = 0
+    RESERVED = list(_mflatten([list(range(10,19)),38,39]))
     WIG = range(20,30) # Wing in ground
     FISHING = 30
     TUGTOW = [31,32,52]
